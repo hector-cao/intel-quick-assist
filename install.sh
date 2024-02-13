@@ -1,17 +1,23 @@
 #!/bin/bash
 
-set -e
 set -x
 
 # Install the 6.8 kernel
 UNAME_R=$(uname -r)
 if [[ $UNAME_R != 6.8* ]]; then
-    apt-add-repository ppa:canonical-kernel-team/ubuntu/unstable                                                 
+    apt-add-repository -y ppa:canonical-kernel-team/ubuntu/unstable
     # install kernel
     apt install -y linux-image-6.8.0-5-generic
     ### qat drivers are in modules-extra
     apt install -y linux-modules-extra-6.8.0-5-generic
     reboot
+fi
+
+grep -E "GRUB_CMDLINE_LINUX.*=.*\".*intel_iommu( )*=( )*on.*\"" /etc/default/grub &> /dev/null
+if [ $? -ne 0 ]; then
+  sed -i -E "s/GRUB_CMDLINE_LINUX=\"(.*)\"/GRUB_CMDLINE_LINUX=\"\1 intel_iommu=on\"/g" /etc/default/grub
+  update-grub
+  grub-install
 fi
 
 # PPA
@@ -20,6 +26,9 @@ add-apt-repository -y ppa:kobuk-team/qat-ubuntu
 # List QAT physical devices
 # 
 lspci -d :4940 -k
+
+# list VFs (virtual functions)
+lspci -d :4941 -k
 
 # qatlib
 apt install --yes qatengine qatlib-examples
