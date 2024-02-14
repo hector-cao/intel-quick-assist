@@ -2,7 +2,9 @@
 
 # https://www.kernel.org/doc/Documentation/ABI/testing/debugfs-driver-qat_telemetry
 
+#
+# no need to have VFs for PFs data collection
+
 mount -t debugfs none /sys/kernel/debug || true
 
-/sys/kernel/debug/qat_4xxx_0000:ed:00.0/
 

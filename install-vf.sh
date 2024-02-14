@@ -21,3 +21,6 @@ fi
 # the VF device ID is 0x4941
 lspci -d :4941
 
+
+# install libvirt & qemu
+apt install -y libvirt-clients qemu-system-x86

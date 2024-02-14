@@ -27,13 +27,15 @@ add-apt-repository -y ppa:kobuk-team/qat-ubuntu
 # 
 lspci -d :4940 -k
 
+# install qat
+# qatlib-service (qat service) is mandatory to initialize the VFs
+apt install --yes qatengine qatlib-examples qatlib-service
+
+# qat service must always be running to enable the VFs
+systemctl restart qat
+
 # list VFs (virtual functions)
 lspci -d :4941 -k
-
-# qatlib
-apt install --yes qatengine qatlib-examples
-
-# qatengine
 
 # check qatengine
 openssl engine -t -c -v qatengine
