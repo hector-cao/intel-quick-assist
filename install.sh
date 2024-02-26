@@ -3,14 +3,24 @@
 #set -x
 
 # Install the 6.8 kernel
-UNAME_R=$(uname -r)
-if [[ $UNAME_R != 6.8* ]]; then
-    apt-add-repository -y ppa:canonical-kernel-team/ubuntu/unstable
-    # install kernel
-    apt install -y linux-image-6.8.0-5-generic
-    ### qat drivers are in modules-extra
-    apt install -y linux-modules-extra-6.8.0-5-generic
-fi
+KERNEL_VERSION=6.8.0-11-generic
+
+# FROM unstable
+# UNAME_R=$(uname -r)
+# if [[ $UNAME_R != 6.8* ]]; then
+#     apt-add-repository -y ppa:canonical-kernel-team/ubuntu/unstable
+# fi
+
+# From Proposed bucket
+cat <<EOF >/etc/apt/sources.list.d/ubuntu-$(lsb_release -cs)-proposed.list
+# Enable Ubuntu proposed archive
+deb http://archive.ubuntu.com/ubuntu/ $(lsb_release -cs)-proposed restricted main multiverse universe
+EOF
+
+# install kernel
+apt install -y linux-image-${KERNEL_VERSION}
+### qat drivers are in modules-extra
+apt install -y linux-modules-extra-${KERNEL_VERSION}
 
 grep -E "GRUB_CMDLINE_LINUX.*=.*\".*intel_iommu( )*=( )*on.*\"" /etc/default/grub &> /dev/null
 if [ $? -ne 0 ]; then
