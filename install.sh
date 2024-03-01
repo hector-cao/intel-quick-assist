@@ -37,7 +37,7 @@ if [ $? -ne 0 ]; then
 fi
 
 # PPA
-add-apt-repository -y ppa:kobuk-team/qat-ubuntu
+#add-apt-repository -y ppa:kobuk-team/qat-ubuntu
 
 # List QAT physical devices
 # 
@@ -46,6 +46,19 @@ add-apt-repository -y ppa:kobuk-team/qat-ubuntu
 # install qat
 # qatlib-service (qat service) is mandatory to initialize the VFs
 apt install --yes qatengine qatlib-examples qatlib-service qatzip
+
+# check components
+echo "==============================="
+apt list libqat4 \
+    qatlib-examples \
+    qatzip \
+    libqatzip3 \
+    libcrypto-mb11 \
+    qatlib-service \
+    qatengine \
+    libippcp11 \
+    libusdm0
+echo "==============================="
 
 # qat service must always be running to enable the VFs
 #systemctl restart qat
