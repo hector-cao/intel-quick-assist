@@ -3,7 +3,20 @@
 #set -x
 
 # Install the 6.8 kernel
-KERNEL_VERSION=6.8.0-11-generic
+KERNEL_VERSION=6.8.0-20-generic
+
+# grub: switch to kernel version
+grub_switch_kernel() {
+    KERNELVER=$1
+    MID=$(awk '/Advanced options for Ubuntu/{print $(NF-1)}' /boot/grub/grub.cfg | cut -d\' -f2)
+    KID=$(awk "/with Linux $KERNELVER/"'{print $(NF-1)}' /boot/grub/grub.cfg | cut -d\' -f2 | head -n1)
+    cat > /etc/default/grub.d/99-tdx-kernel.cfg <<EOF
+GRUB_DEFAULT=saved
+GRUB_SAVEDEFAULT=true
+EOF
+    grub-editenv /boot/grub/grubenv set saved_entry="${MID}>${KID}"
+    update-grub
+}
 
 # FROM unstable
 # UNAME_R=$(uname -r)
@@ -21,6 +34,8 @@ EOF
 apt install -y linux-image-${KERNEL_VERSION}
 ### qat drivers are in modules-extra
 apt install -y linux-modules-extra-${KERNEL_VERSION}
+
+grub_switch_kernel ${KERNEL_VERSION}
 
 grep -E "GRUB_CMDLINE_LINUX.*=.*\".*intel_iommu( )*=( )*on.*\"" /etc/default/grub &> /dev/null
 if [ $? -ne 0 ]; then
