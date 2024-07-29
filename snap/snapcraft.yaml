@@ -1,0 +1,29 @@
+name: qatengine
+version: "1.0"
+summary: QAT Openssl Provider
+description: QAT Openssl Provider
+base: core24
+confinement: strict
+grade: stable
+platforms:
+    intel:
+      build-on: [amd64]
+      build-for: [amd64]
+
+# TODO : double-check plugs
+apps:
+  openssl:
+    command: usr/bin/openssl
+  cpa-sample-code:
+    command: usr/bin/cpa_sample_code
+    plugs:
+      - network-control
+      - process-control
+
+parts:
+  qat_engine:
+    plugin: nil
+    stage-packages:
+      - openssl
+      - qatengine
+      - qatlib-examples
