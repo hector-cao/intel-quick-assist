@@ -10,15 +10,14 @@ platforms:
       build-on: [amd64]
       build-for: [amd64]
 
-# TODO : double-check plugs
 apps:
   openssl:
     command: usr/bin/openssl
   cpa-sample-code:
     command: usr/bin/cpa_sample_code
-    plugs:
-      - network-control
-      - process-control
+    # plugs:
+    #   - network-control
+    #   - process-control
 
 parts:
   qat_engine:
