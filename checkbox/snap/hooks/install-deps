@@ -1,0 +1,6 @@
+#!/bin/bash
+
+# install dependencies for the checkbox provider
+
+apt install -y qatzip qatengine
+

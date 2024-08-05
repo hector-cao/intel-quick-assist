@@ -1,0 +1,12 @@
+#!/bin/sh
+
+SCRIPT_DIR=$(dirname $(readlink -f "$0"))
+
+set -e
+
+# this  script will be executed on the host at  snap removal
+
+rm -f /etc/sudoers.d/checkbox
+rm -f /etc/polkit-1/localauthority/50-local.d/com.canonical.certification.checkbox.pkla || /bin/true
+
+$SCRIPT_DIR/remove-deps

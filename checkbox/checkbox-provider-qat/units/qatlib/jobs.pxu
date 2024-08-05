@@ -1,0 +1,11 @@
+id: qat-qatlib/cpa-sample-code
+category_id: qat-qatlib
+flags: simple
+user: root
+_summary: Run CPA sample code
+depends:
+after:
+requires:
+command:
+  #cpa_sample_code
+  qatctl --status
