@@ -13,11 +13,21 @@ platforms:
 apps:
   openssl:
     command: usr/bin/openssl
+    plugs:
+      - intel-qat
+      - process-control
+    environment:
+      OPENSSL_ENGINES: $SNAP/usr/lib/x86_64-linux-gnu/engines-3
   cpa-sample-code:
     command: usr/bin/cpa_sample_code
-    # plugs:
-    #   - network-control
-    #   - process-control
+    plugs:
+      - intel-qat
+      - process-control
+  dc-dp-sample:
+    command: usr/bin/dc_dp_sample
+    plugs:
+      - intel-qat
+      - process-control
 
 parts:
   qat_engine:
