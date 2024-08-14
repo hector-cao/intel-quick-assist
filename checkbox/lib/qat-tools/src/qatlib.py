@@ -7,6 +7,7 @@ import subprocess
 import time
 from prettytable import PrettyTable
 from pprint import *
+from util import *
 
 INTEL_VENDOR = '0x8086'
 QAT_PF_DEVICE_ID_LIST = ["0x4940", "0x4942", "0x4944", "0x4946"]
@@ -45,11 +46,11 @@ class VFIOGroup(dict):
   def __str__(self):
     return json.dumps(self, indent=2)
 
-class CounterType(Enum):
+class CounterType(ExtendedEnum):
   UTILIZATION = 'util'
   EXECUTION = 'exec'
 
-class CounterEngine(Enum):
+class CounterEngine(ExtendedEnum):
   CIPHER = 'cph'
   AUTHENTICATION = 'ath'
   PUBLIC_KEY_ENCRYPT = 'pke'
@@ -223,7 +224,16 @@ class Qat4xxxDevice():
     with path.open('w+') as f:
       f.write(state)
 
-  def set_service(self, service):
+  def set_auto_reset(self, auto_reset):
+    path = self.sys_path / "qat" / "auto_reset"
+    with path.open('w+') as f:
+      if auto_reset:
+        f.write('on')
+      else:
+        f.write('off')
+
+
+  def set_cfg_services(self, service):
     self.set_state('down')
     path = self.sys_path / "qat" / "cfg_services"
     with path.open('w+') as f:
@@ -240,6 +250,13 @@ class Qat4xxxDevice():
   @property
   def state(self):
     path = self.sys_path / "qat" / "state"
+    with path.open() as f:
+      data = f.read()
+    return data.replace("\n", "")
+
+  @property
+  def auto_reset(self):
+    path = self.sys_path / "qat" / "auto_reset"
     with path.open() as f:
       data = f.read()
     return data.replace("\n", "")
@@ -301,9 +318,9 @@ class QatDevManager:
     for d in self.qat_devs:
       d.set_state(state)
 
-  def set_service(self, service):
+  def set_cfg_services(self, service):
     for d in self.qat_devs:
-      d.set_service(service)
+      d.set_cfg_services(service)
 
   def print_cfg(self):
     for d in self.qat_devs:

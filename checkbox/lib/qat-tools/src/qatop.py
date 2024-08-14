@@ -12,6 +12,7 @@ import time
 import urwid as u
 from urwid import LineBox
 import json
+import itertools
 
 from qatlib import *
 
@@ -31,9 +32,10 @@ class MyListBox(u.ListBox):
     return len(self.body.contents) > 0
 
 class CustomProgressBar(u.ProgressBar):
-  def __init__(self, fn, *args, **kwargs):
+  def __init__(self, fn, counter_type, *args, **kwargs):
     super().__init__(*args, **kwargs)
     self.fn = fn
+    self.counter_type = counter_type
     self.max_val = 0
     self.sample_count = 1
     self.total = 0
@@ -42,7 +44,10 @@ class CustomProgressBar(u.ProgressBar):
     if self.current < 0:
       return "Not available"
     avg_val = self.total / self.sample_count
-    return f'{self.current:.1f}% (max: {self.max_val:.1f} - avg: {avg_val:.1f})'
+    if self.counter_type == CounterType.UTILIZATION:  
+      return f'{self.current:.1f}% (max: {self.max_val:.1f} - avg: {avg_val:.1f})'
+    else:
+      return f'{self.current} (max: {self.max_val} - avg: {avg_val})'
 
   def update_display(self):
     val =  self.fn()
@@ -62,15 +67,20 @@ class UIApp(object):
       next_focus = (self.columns.focus_position + 1) % len(self.columns.contents)
       self.columns.set_focus(next_focus)
 
-  def create_pb(self, dev, util_cat):
+  def create_progress_bar(self,
+                          dev,
+                          counter_type: CounterType,
+                          counter_engine: CounterEngine):
     def get_utilization_val():
-      return dev.debugfs.get('telemetry').get('device_data').avg(CounterType.UTILIZATION, util_cat)
-    counter_name = f'util_{util_cat.value}'
+      return dev.debugfs.get('telemetry').get('device_data').avg(counter_type, counter_engine)
+    counter_name = f'{counter_type.value}_{counter_engine.value}'
     # filtering
     if not QatDevManager.filter_counter(counter_name):
       return None
-    pb_title = '{}/{}'.format(dev.pci_id, util_cat.value)
-    pb = CustomProgressBar(get_utilization_val, '', 'loaded')
+    pb_title = '{}/{}'.format(dev.pci_id, counter_name)
+    pb = CustomProgressBar(get_utilization_val, counter_type,
+                           '',
+                           'loaded')
     col = u.Columns([('weight', 0.2,
               u.Text(pb_title)), LineBox(pb)])
     self.progress_bars.append(pb)
@@ -84,7 +94,10 @@ class UIApp(object):
     cols = []
     for dev in qat_manager.qat_devs:
       for util_cat in CounterEngine:
-        col = self.create_pb(dev, util_cat)
+        col = self.create_progress_bar(dev, CounterType.UTILIZATION, util_cat)
+        if col:
+          cols.append(col)
+        col = self.create_progress_bar(dev, CounterType.EXECUTION, util_cat)
         if col:
           cols.append(col)
 
@@ -124,11 +137,16 @@ def qatop(opts, p):
   else:
     app = UIApp(qat_manager)
 
+counters = [ counter[0] + '_' + counter[1] for counter in
+             itertools.product(CounterType.list(), CounterEngine.list()) ]
+
 def main():
-  parser = argparse.ArgumentParser(description=f'QAT counter utilization (%) display and record tool (telemetry) - v{VERSION}')
+  parser = argparse.ArgumentParser(description=f'QAT telemetry display and record tool - v{VERSION}')
   parser.add_argument('--record', '-r', action='store_true', default=False, help='Record telemetry data')
   parser.add_argument('-d', '--devices', nargs='+', default=None, help='List of devices to display (if not provided, display all devices)')
-  parser.add_argument('-c', '--counters', nargs='+', default=None, help='List of counters to display (ex: --counters util_pke)')
+  parser.add_argument('-c', '--counters', nargs='*',
+                      choices=counters,
+                      help='List of counters to display (default: %(default)s)')
   results = parser.parse_args()
   qatop(results, parser)
 
