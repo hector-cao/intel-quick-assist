@@ -13,12 +13,12 @@ INTEL_VENDOR = '0x8086'
 QAT_PF_DEVICE_ID_LIST = ["0x4940", "0x4942", "0x4944", "0x4946"]
 QAT_VF_DEVICE_ID_LIST = ["0x4941", "0x4943", "0x4945", "0x4947"]
 
-def get_pci_ids(device_id, vendor_id=''):
+def get_pci_ids(device_id : str, vendor_id : str = ''):
   args: List[str] = ['lspci', '-d', f'{vendor_id}:{device_id}']
   devices = subprocess.check_output(args, universal_newlines=True).splitlines()
   return [v.split(' ')[0] for v in devices]
 
-def get_vfio(bdf):
+def get_vfio(bdf : str):
   vfio_path = pathlib.Path('/dev/vfio/')
   vfio_files = vfio_path.glob('*')
   for vfio_file in vfio_files:
@@ -207,12 +207,16 @@ class Qat4xxxDevice():
     vf_pci_device_id = str(int(self.pci_device_id) + 1)
     pci_ids = get_pci_ids(vf_pci_device_id)
     for pci_id in pci_ids:
-      qat_dev = Qat4xxxDevice(vf_pci_device_id,
-                              pci_id,
-                              is_virtual_function=True,
-                              parent_pf=self)
-      if self._check_vf(qat_dev):
-        self.vfs.append(qat_dev)
+      try:
+        qat_dev = Qat4xxxDevice(vf_pci_device_id,
+                                pci_id,
+                                is_virtual_function=True,
+                                parent_pf=self)
+        if self._check_vf(qat_dev):
+          self.vfs.append(qat_dev)
+      except:
+        # if the vfio is not setup properly, the creation of the virtual device might fail 
+        pass
 
   def _check_vf(self, vf):
     pci_ids=self.pci_id.split(':')

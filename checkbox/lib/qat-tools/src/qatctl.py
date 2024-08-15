@@ -27,6 +27,10 @@ def qatctl(opts, p):
     print(f'Please restart qat service to update the config')
     return
 
+  if opts.command == 'list':
+    if args.short:
+      return
+
   qat_manager.list_devices()
 
 # * sym;asym: the device is configured for running crypto
@@ -59,10 +63,23 @@ cfg_services = [
 
 def main():
   parser = argparse.ArgumentParser(description=f'QAT control utility - v{VERSION}')
-  parser.add_argument('-d', '--devices', nargs='+', default=None, help='select devices for the command (space separated)')
-  parser.add_argument('--status', '-s', action='store_true', default=False, help='print configuration')
-  parser.add_argument('--list', '-l', action='store_true', default=False, help='list devices (PF)')
-  parser.add_argument('--set-state', type=str, default=None, choices=['up', 'down'], help='set device state')
-  parser.add_argument('--set-service', type=str, default=None, choices=cfg_services, help='set device service')
+  parser.add_argument('-d', '--devices',
+                      nargs='+', default=None,
+                      help='select devices for the command (space separated)')
+  parser.add_argument('--status', '-s',
+                      action='store_true', default=False,
+                      help='print configuration')
+  list_group = parser.add_argument_group('some group')
+  subparser = parser.add_subparsers()
+  list_dev = subparser.add_parser('list')
+  list_dev.add_argument('--short', '-s',
+                          action='store_true', default=False,
+                          help='list devices (PF)')
+  parser.add_argument('--set-state',
+                      type=str, default=None, choices=['up', 'down'],
+                      help='set device state')
+  parser.add_argument('--set-service',
+                      type=str, default=None, choices=cfg_services,
+                      help='set device service')
   results = parser.parse_args()
   qatctl(results, parser)
