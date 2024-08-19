@@ -5,7 +5,8 @@ description: |
 version: '2.0'
 confinement: classic
 grade: stable
-
+environment:
+  PYTHONPATH: $PYTHONPATH:$SNAP/lib/python3.12/site-packages/
 base: core24
 
 # Here are the available applications of the TDX checkbox provider snap
@@ -63,12 +64,12 @@ passthrough:
 
 parts:
 
-  qat-tools:
-    plugin: dump
-    source: lib/qat-tools/
+  qat_tools:
+    plugin: python
+    source: lib/qat_tools-1.0.0/
     source-type: local
-    override-build: |
-      pip install -t $SNAPCRAFT_PART_INSTALL/usr/lib/python3/dist-packages  --break-system-packages ./
+    stage-packages:
+      - python3.12-minimal
 
   checkbox-provider-qat:
     plugin: dump

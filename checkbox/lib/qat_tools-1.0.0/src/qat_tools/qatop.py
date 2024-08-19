@@ -14,7 +14,7 @@ from urwid import LineBox
 import json
 import itertools
 
-from qatlib import *
+from qat_tools.qatlib import *
 
 VERSION = '1.0.0'
 

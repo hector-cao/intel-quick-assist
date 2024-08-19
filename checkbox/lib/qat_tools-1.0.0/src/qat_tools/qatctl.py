@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from qatlib import *
+from qat_tools.qatlib import *
 
 import argparse
 from prettytable import PrettyTable

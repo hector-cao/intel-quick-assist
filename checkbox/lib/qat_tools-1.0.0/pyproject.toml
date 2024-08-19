@@ -1,5 +1,14 @@
+[build-system]
+requires = [
+  "setuptools >= 61.0.0",
+  "setuptools_scm[toml]>=7.0",
+  "wheel",
+]
+
+build-backend="setuptools.build_meta" 
+
 [project]
-name = "qat-tools"
+name = "qat_tools"
 description = "A collection of tools for Intel Quick Assist Technology (QAT)"
 readme = "README.md"
 license = {text = "GPL-3.0-only"}
@@ -35,6 +44,5 @@ Homepage = "https://github.com/canonical/qat-tools"
 Source = "https://github.com/canonical/qat-tools"
 
 [project.scripts]
-qatctl = "qatctl:main"
-qatop = "qatop:main"
-
+qatctl = "qat_tools.qatctl:main"
+qatop = "qat_tools.qatop:main"

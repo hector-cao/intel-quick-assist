@@ -7,7 +7,7 @@ import subprocess
 import time
 from prettytable import PrettyTable
 from pprint import *
-from util import *
+from qat_tools import util
 
 INTEL_VENDOR = '0x8086'
 QAT_PF_DEVICE_ID_LIST = ["0x4940", "0x4942", "0x4944", "0x4946"]
@@ -46,11 +46,11 @@ class VFIOGroup(dict):
   def __str__(self):
     return json.dumps(self, indent=2)
 
-class CounterType(ExtendedEnum):
+class CounterType(util.ExtendedEnum):
   UTILIZATION = 'util'
   EXECUTION = 'exec'
 
-class CounterEngine(ExtendedEnum):
+class CounterEngine(util.ExtendedEnum):
   CIPHER = 'cph'
   AUTHENTICATION = 'ath'
   PUBLIC_KEY_ENCRYPT = 'pke'
