@@ -7,6 +7,9 @@ from prettytable import PrettyTable
 
 VERSION = '1.0.0'
 
+def list_dev(args, qat_manager):
+  qat_manager.list_devices(args.short)
+   
 # Check arguments and call requested function
 def qatctl(opts, p):
   global VERSION
@@ -27,11 +30,7 @@ def qatctl(opts, p):
     print(f'Please restart qat service to update the config')
     return
 
-  if opts.command == 'list':
-    if args.short:
-      return
-
-  qat_manager.list_devices()
+  opts.func(opts, qat_manager)
 
 # * sym;asym: the device is configured for running crypto
 # 		  services
@@ -71,10 +70,11 @@ def main():
                       help='print configuration')
   list_group = parser.add_argument_group('some group')
   subparser = parser.add_subparsers()
-  list_dev = subparser.add_parser('list')
-  list_dev.add_argument('--short', '-s',
+  parser_list_dev = subparser.add_parser('list')
+  parser_list_dev.add_argument('--short', '-s',
                           action='store_true', default=False,
                           help='list devices (PF)')
+  parser_list_dev.set_defaults(func=list_dev) 
   parser.add_argument('--set-state',
                       type=str, default=None, choices=['up', 'down'],
                       help='set device state')

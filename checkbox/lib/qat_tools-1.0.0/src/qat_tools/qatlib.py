@@ -314,9 +314,12 @@ class QatDevManager:
     for d in self.qat_devs:
       print(d.debugfs.get('telemetry'))
 
-  def list_devices(self):
+  def list_devices(self, short: bool):
     for d in self.qat_devs:
-      print(d)
+      if short:
+        print(d.pci_id)
+      else:
+        print(d)
 
   def set_state(self, state):
     for d in self.qat_devs:
