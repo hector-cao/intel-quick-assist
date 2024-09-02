@@ -2,6 +2,7 @@ id: intel-qat
 unit: test plan
 _name: Intel Quick Assist Technology (QAT) tests for 4th Gen QAT devices
 include:
+    qat/.*
     qat-qatlib/.*
 #mandatory_include:
 #    com.canonical.certification::miscellanea/submission-resources

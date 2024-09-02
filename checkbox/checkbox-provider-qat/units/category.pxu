@@ -1,4 +1,4 @@
 unit: category
-id: tdx
-_name: Intel TDX basic tests
+id: qat
+_name: Intel Quick Assist Technology tests
 
