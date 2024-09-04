@@ -2,5 +2,5 @@
 
 # install dependencies for the checkbox provider
 
-apt install -y qatzip qatengine
+apt install -y qatzip qatengine qatlib-examples
 

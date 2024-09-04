@@ -1,11 +1,28 @@
-id: qat-qatlib/cpa-sample-code
+id: qat-qatlib/cpa-sample-code-sym
 category_id: qat-qatlib
 flags: simple
 user: root
-_summary: Run CPA sample code
+_summary: Run CPA symmetric crypto tests
 depends:
 after:
 requires:
 command:
-  #cpa_sample_code
-  qatctl --status
+  # 1 : symmetric crypto tests only
+  # 2 : RSA crypto tests only
+  # 3 : Compression tests only
+  #cpa_sample_code runTests=1
+
+id: qat-qatlib/cpa-sample-code-rsa
+category_id: qat-qatlib
+flags: simple
+user: root
+_summary: Run CPA RSA tests
+depends:
+after:
+requires:
+command:
+  # 1 : symmetric crypto tests only
+  # 2 : RSA crypto tests only
+  # 3 : Compression tests only
+  #cpa_sample_code runTests=2
+

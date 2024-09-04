@@ -15,3 +15,6 @@ forced = yes
 type = silent
 auto_retry = no
 
+[manifest]
+com.canonical.certification::has_intel_qat = True
+

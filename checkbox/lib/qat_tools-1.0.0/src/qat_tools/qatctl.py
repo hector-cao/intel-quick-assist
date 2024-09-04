@@ -9,19 +9,25 @@ VERSION = '1.0.0'
 
 def list_dev(args, qat_manager):
   qat_manager.list_devices(args.short)
-   
+
+def status_dev(args, qat_manager):
+  if args.vfio:
+    qat_manager.print_vfio()
+  else:
+    qat_manager.print_cfg()
+
 # Check arguments and call requested function
 def qatctl(opts, p):
   global VERSION
   qat_manager = QatDevManager(opts.devices)
 
-  if opts.status:
-    qat_manager.print_cfg()
-    return
-
   if opts.set_state:
     print(f'Set device state : {opts.set_state}')
     qat_manager.set_state(opts.set_state)
+    return
+
+  if opts.get_state:
+    qat_manager.get_state()
     return
 
   if opts.set_service:
@@ -65,10 +71,7 @@ def main():
   parser.add_argument('-d', '--devices',
                       nargs='+', default=None,
                       help='select devices for the command (space separated)')
-  parser.add_argument('--status', '-s',
-                      action='store_true', default=False,
-                      help='print configuration')
-  list_group = parser.add_argument_group('some group')
+  list_group = parser.add_argument_group('list group')
   subparser = parser.add_subparsers()
   parser_list_dev = subparser.add_parser('list')
   parser_list_dev.add_argument('--short', '-s',
@@ -81,5 +84,14 @@ def main():
   parser.add_argument('--set-service',
                       type=str, default=None, choices=cfg_services,
                       help='set device service')
+  parser.add_argument('--get-state',
+                      action='store_true', default=False,
+                      help='get device state')
+  status_group = parser.add_argument_group('status group')
+  parser_status = subparser.add_parser('status')
+  parser_status.add_argument('--vfio',
+                             action='store_true', default=False,
+                             help='list VFIO devices')
+  parser_status.set_defaults(func=status_dev)
   results = parser.parse_args()
   qatctl(results, parser)

@@ -1,7 +1,0 @@
-id: qat/attach-devices
-plugin: attachment
-category_id: qat
-user: root
-_summary: Attach devices list
-command:
- qatctl --status

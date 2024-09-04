@@ -329,6 +329,15 @@ class QatDevManager:
     for d in self.qat_devs:
       d.set_cfg_services(service)
 
+  def get_state(self):
+    for d in self.qat_devs:
+      print(d.state)
+
+  def print_vfio(self):
+    for d in self.qat_devs:
+      for vf in d.vfs:
+        print(vf.vfio["vfio_dev"])
+
   def print_cfg(self):
     for d in self.qat_devs:
       print(f'BDF: {d.bdf}')
