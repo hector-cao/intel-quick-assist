@@ -1,0 +1,4 @@
+unit: manifest entry
+id: has_intel_qat
+_name: Intel Quick Assist device
+value-type: bool
