@@ -1,0 +1,12 @@
+id: qat/qat-pf
+category_id: qat
+_description:
+  List of QAT VFs
+plugin: resource
+command:
+  PFS=$(qatctl list --short)
+  for pf in ${PFS}; do
+    echo "pf: ${pf}"
+    echo ""
+  done
+estimated_duration: 1s
