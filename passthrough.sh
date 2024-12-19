@@ -7,7 +7,7 @@ mkdir -p $WORK_DIR
 sudo rmmod qat_4xxx
 sudo modprobe qat_4xxx
 
-sudo modprobe vfio-pci ids=8086:4940
+sudo modprobe vfio-pci ids=8086:4941
 
 #                   -object tdx-guest,id=tdx -machine q35,kernel_irqchip=split,confidential-guest-support=tdx \
 sudo qemu-system-x86_64 -cpu host -smp 16,sockets=1 -accel kvm \
