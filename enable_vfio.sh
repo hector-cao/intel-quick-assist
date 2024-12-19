@@ -1,7 +1,7 @@
 #!/bin/bash
 
 rmmod vfio-pci
-modprobe vfio-pci ids=8086:4941
+modprobe vfio-pci ids=8086:4940
 
 QAT_BDF=0000\:$1
 
